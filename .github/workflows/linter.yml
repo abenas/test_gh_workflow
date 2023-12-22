@@ -2,24 +2,52 @@
 name: Python Linter
 
 on:
-    push:
-        branches:
-            - main
-    # pull_request:
-    #     branches:
-    #         - main
+  push:
+    branches:
+      - staging
+  # pull_request:
+  #     branches:
+  #         - main
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v2  
-            - name: Python Linter
-              uses: sunnysid3up/python-linter@master
-              with:
-                source: "src"
-                mypy-options: "--ignore-missing-imports --show-error-codes"
-                pylint-options: "--rcfile=setup.cfg"
-                isort-options: "-w 100"
-                django: false
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Python binary
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.11"
+        # - run: python src/fibo.py
+
+        - name: Install dependencies
+          run: |
+            pip install -r requirements.txt
+
+        # - name: Run Python Linters
+        #   run: |
+        #     python -m pylint src
+        #     python -m black src
+        #     python -m flake8 src
+
+        - name: Run Python tests
+          run: |
+            python -m pytest src
+            python -m coverage run --source=src -m pytest src
+            python -m coverage report -m
+            python -m coverage xml
+            python -m coverage html
+
+#             python -m mypy src
+#            python -m isort src
+
+        # - name: Run Python Linter
+        #   uses: sunnysid3up/python-linter@master
+        #   with:
+        #     source: "src"
+        #     mypy-options: "--ignore-missing-imports --show-error-codes"
+        #     pylint-options: "--rcfile=setup.cfg"
+        #     isort-options: "-w 100"
