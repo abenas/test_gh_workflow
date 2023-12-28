@@ -1,13 +1,13 @@
 # FILEPATH: .github/workflows/linter.yml
-name: Python Linter
+name: Python Linters
 
 on:
   push:
     branches:
       - staging
-  # pull_request:
-  #     branches:
-  #         - main
+  pull_request:
+    branches:
+      - staging
 
 jobs:
   lint:
@@ -21,33 +21,34 @@ jobs:
           uses: actions/setup-python@v5
           with:
             python-version: "3.11"
-        # - run: python src/fibo.py
+        - run: python app/src/fibo.py 2
+        - run: python app/src/check.py
+
+        - name: Run Custom Check
+          run: python app/src/check.py
 
         - name: Install dependencies
           run: |
             pip install -r requirements.txt
 
-        # - name: Run Python Linters
-        #   run: |
-        #     python -m pylint src
-        #     python -m black src
-        #     python -m flake8 src
+        - name: Run Python Code Quality Checks
+          run: |
+            python -m pylint app/src
+            python -m flake8 app/src
+            
+        - name: Run Python Code Formatter
+          run: |
+            python -m black app/src
+            python -m isort app/src
+
+        - name: Run Python Code Static Type Checker
+          run: |
+            python -m mypy app/src
 
         - name: Run Python tests
           run: |
-            python -m pytest src
-            python -m coverage run --source=src -m pytest src
+            python -m coverage run --source=app/src -m pytest app/src
             python -m coverage report -m
             python -m coverage xml
             python -m coverage html
-
-#             python -m mypy src
-#            python -m isort src
-
-        # - name: Run Python Linter
-        #   uses: sunnysid3up/python-linter@master
-        #   with:
-        #     source: "src"
-        #     mypy-options: "--ignore-missing-imports --show-error-codes"
-        #     pylint-options: "--rcfile=setup.cfg"
-        #     isort-options: "-w 100"
+            python -m mypy app/src
