@@ -21,8 +21,6 @@ jobs:
           uses: actions/setup-python@v5
           with:
             python-version: "3.11"
-        - run: python app/src/fibo.py 2
-        - run: python app/src/check.py
 
         - name: Run Custom Check
           run: python app/src/check.py
