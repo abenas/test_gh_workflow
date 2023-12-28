@@ -3,9 +3,10 @@ Test the `check` module.
 """
 
 import unittest
-from src import check
 import tempfile
 import os
+from src import check
+
 
 class TestCheck(unittest.TestCase):
     """
@@ -16,7 +17,8 @@ class TestCheck(unittest.TestCase):
         """
         Test the `has_import` function with various input values.
 
-        This test asserts that the `has_import` function returns the correct output for different input values.
+        This test asserts that the `has_import` function returns the correct
+        output for different input values.
         """
         with tempfile.NamedTemporaryFile(delete=False) as f:
             f.write(b"import os\n")
