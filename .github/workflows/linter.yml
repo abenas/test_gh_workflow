@@ -1,0 +1,54 @@
+# FILEPATH: .github/workflows/linter.yml
+name: Python Linters
+
+on:
+  push:
+    branches:
+      - staging
+  pull_request:
+    branches:
+      - staging
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Python binary
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.11"
+        - run: python app/src/fibo.py 2
+        - run: python app/src/check.py
+
+        - name: Run Custom Check
+          run: python app/src/check.py
+
+        - name: Install dependencies
+          run: |
+            pip install -r requirements.txt
+
+        - name: Run Python Code Quality Checks
+          run: |
+            python -m pylint app/src
+            python -m flake8 app/src
+            
+        - name: Run Python Code Formatter
+          run: |
+            python -m black app/src
+            python -m isort app/src
+
+        - name: Run Python Code Static Type Checker
+          run: |
+            python -m mypy app/src
+
+        - name: Run Python tests
+          run: |
+            python -m coverage run --source=app/src -m pytest app/src
+            python -m coverage report -m
+            python -m coverage xml
+            python -m coverage html
+            python -m mypy app/src
